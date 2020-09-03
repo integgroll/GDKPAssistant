@@ -130,3 +130,8 @@ dmypy.json
 
 #Pycharm's shit
 .idea/
+
+#Dynaconf configurationfiles
+.secrets.*
+.settings.*
+.env
