@@ -6,6 +6,14 @@ from discord.ext.commands import Bot
 
 discord_bot_handle = Bot(command_prefix=("!","$"))
 
+
+class GDKPABot(discord.ext.commands.Bot):
+    def __init__(self):
+        """
+
+        """
+
+
 @discord_bot_handle.event
 async def on_message(message):
     """
