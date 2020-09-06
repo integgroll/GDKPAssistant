@@ -3,7 +3,7 @@ import importlib
 import discordbot.cogs.account
 from loguru import logger
 from dynaconf import settings as dyna_settings
-from discord.ext.commands import Bot
+import discord.ext.commands
 
 
 class GDKPABot(discord.ext.commands.Bot):
@@ -12,18 +12,19 @@ class GDKPABot(discord.ext.commands.Bot):
         Build the stack of background variables that we need to maintain the state of the bot and the service
         """
         super().__init__(
-            command_prefix=("!", "$"),
+            command_prefix="!",
             description="GDKP Assistant primarily created for guilds on Atiesh, Alliance",
             pm_help=None,
             case_insensitive=True
         )
+
+        self.add_cog(discordbot.cogs.account.Accounts(self))
 
         self.server_message_state = {}
 
         # Load the database that you have put files in based on the configuration files
         self.record_handle = importlib.import_module(
             f"discordbot.storage.{dyna_settings.get('STORAGE_OPTION', 'dictionary_storage')}").PythonicRecord()
-        self.add_cog(discordbot.cogs.account.Accounts(self))
 
     async def on_ready(self):
         """
@@ -52,8 +53,9 @@ class GDKPABot(discord.ext.commands.Bot):
             return
 
         if message.content.startswith('!botstart'):
-            msg = f"Hello {message.author.mention}"
-            await self.send_message(message.channel, msg)
+            await message.channel.send(f"Hello {message.author.mention}")
+
+        await self.process_commands(message)
 
     async def on_voice_state_update(self, member, before, after):
         """
@@ -91,6 +93,3 @@ class GDKPABot(discord.ext.commands.Bot):
         :type user: Union[:class:`Member`, :class:`User`]
         :return:
         """
-
-
-discord_bot_handle.run(dyna_settings.BOT_TOKEN)

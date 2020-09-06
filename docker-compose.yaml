@@ -1,6 +1,6 @@
 version: '2'
 services:
-    data_pull:
+    bot_server:
         build: .
         volumes:
             - .:/app

@@ -11,3 +11,6 @@ RUN apt-get update && apt-get install -y chromium chromium-driver python-seleniu
 
 # Now copy in our code, and run it
 COPY . /app
+
+
+ENTRYPOINT ["python","GDKPAssistant.py"]
