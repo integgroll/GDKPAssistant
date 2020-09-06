@@ -71,9 +71,9 @@ class PythonicRecord:
             logger.error(e)
             return False
 
-    def add_owner_account(self, account_number, modify_account):
+    def add_admin_account(self, account_number, modify_account):
         """
-        Add an owner to the account
+        Add an admins to the account
         :param account_number:
         :param modify_account:
         :return:
@@ -85,9 +85,9 @@ class PythonicRecord:
             logger.error(e)
             return False
 
-    def remove_owner_account(self, account_number, modify_account):
+    def remove_admin_account(self, account_number, modify_account):
         """
-        Remove an owner from the account
+        Remove an admins from the account
         :param account_number:
         :param modify_account:
         :return:
@@ -99,9 +99,9 @@ class PythonicRecord:
             logger.error(e)
             return False
 
-    def show_owner_account(self, account_number):
+    def show_admin_account(self, account_number):
         """
-        Shows the owners from the account
+        Shows the admin from the account
         :param account_number:
         :return:
         """
