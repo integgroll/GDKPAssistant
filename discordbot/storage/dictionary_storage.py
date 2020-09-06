@@ -1,5 +1,7 @@
 import datetime
+from dynaconf import settings
 from loguru import logger
+import yaml
 
 
 class PythonicRecord:
@@ -13,6 +15,8 @@ class PythonicRecord:
         Create the back end data structure that needs to be connected to systems
         """
         self.account_storage = {}
+        if settings.get("DICTIONARY_STORAGE", False):
+            self.account_storage = yaml.load(open(settings.DICTIONARY_STORAGE, "r"), yaml.BaseLoader)
 
     def add_account(self, account_number, requesting_account):
         """

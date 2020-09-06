@@ -1,10 +1,10 @@
 import discord
 from loguru import logger
-from dynaconf import settings
-
+from dynaconf import settings as dyna_settings
+import importlib
 from discord.ext.commands import Bot
 
-discord_bot_handle = Bot(command_prefix=("!","$"))
+discord_bot_handle = Bot(command_prefix=("!", "$"))
 
 
 class GDKPABot(discord.ext.commands.Bot):
@@ -14,7 +14,12 @@ class GDKPABot(discord.ext.commands.Bot):
         """
 
         self.server_message_state = {}
-        self.server_
+
+        # Load the database that you have put files in based on the configuration files
+        self.record_handle = importlib.import_module(
+            f"discordbot.storage.{dyna_settings.get('STORAGE_OPTION', 'dictionary_storage')}").PythonicRecord()
+
+
 
     async def on_ready(self):
         """
@@ -33,7 +38,7 @@ class GDKPABot(discord.ext.commands.Bot):
         logger.info(f"Logged in as: {discord_bot_handle.user.name} - {discord_bot_handle.user.id}")
         logger.info("Get Ready to ROCK!!!")
 
-    async def on_message(self,message):
+    async def on_message(self, message):
         """
         General message handler for direct messages
         :param message:
@@ -46,10 +51,7 @@ class GDKPABot(discord.ext.commands.Bot):
             msg = f"Hello {message.author.mention}"
             await discord_bot_handle.send_message(message.channel, msg)
 
-
-
-
-    async def on_voice_state_update(self,member, before, after):
+    async def on_voice_state_update(self, member, before, after):
         """
         Called when a :class:`Member` changes their :class:`VoiceState`.
 
@@ -69,7 +71,7 @@ class GDKPABot(discord.ext.commands.Bot):
         :return:
         """
 
-    async def on_reaction_add(self,reaction, user):
+    async def on_reaction_add(self, reaction, user):
         """
         Called when a message has a reaction added to it. Similar to :func:`on_message_edit`,
         if the message is not found in the internal message cache, then this
@@ -87,14 +89,11 @@ class GDKPABot(discord.ext.commands.Bot):
         """
 
 
-
-
-
 @discord_bot_handle.command(name='fuckyeah',
-                description="Test command that is just fuck yeah",
-                brief="Fuck Yeah",
-                aliases=['fy', 'fhy'],
-                pass_context=True)
+                            description="Test command that is just fuck yeah",
+                            brief="Fuck Yeah",
+                            aliases=['fy', 'fhy'],
+                            pass_context=True)
 async def fuckyar(context):
     """
     This is a comment for the arbitrary fuck yeah command
@@ -105,6 +104,4 @@ async def fuckyar(context):
         await context.send("Fuck Yeah!")
 
 
-discord_bot_handle.run(settings.BOT_TOKEN)
-
-
+discord_bot_handle.run(dyna_settings.BOT_TOKEN)
