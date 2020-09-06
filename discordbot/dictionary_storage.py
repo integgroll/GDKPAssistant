@@ -95,6 +95,18 @@ class PythonicRecord:
             logger.error(e)
             return False
 
+    def show_owner_account(self, account_number):
+        """
+        Shows the owners from the account
+        :param account_number:
+        :return:
+        """
+        try:
+            return self.account_storage[account_number]["admins"]
+        except Exception as e:
+            logger.error(e)
+            return False
+
     def add_power_user_account(self, account_number, modify_account, account_value):
         """
         Add a power user to the account
@@ -135,6 +147,18 @@ class PythonicRecord:
         try:
             self.account_storage[account_number]["powerusers"][modify_account] = account_value
             return True
+        except Exception as e:
+            logger.error(e)
+            return False
+
+    def show_power_user_account(self, account_number):
+        """
+        Update a power user from the account
+        :param account_number:
+        :return:
+        """
+        try:
+            return self.account_storage[account_number]["powerusers"]
         except Exception as e:
             logger.error(e)
             return False
@@ -202,6 +226,18 @@ class PythonicRecord:
             logger.error(e)
             return False
 
+    def list_raids(self, account_number):
+        """
+        Lists the raids for the account
+        :param account_number:
+        :return:
+        """
+        try:
+            return self.account_storage[account_number]["raids"]
+        except Exception as e:
+            logger.error(e)
+            return False
+
     def add_user(self, account_number, user_account):
         """
         Add a user to the account
@@ -226,6 +262,32 @@ class PythonicRecord:
         try:
             del self.account_storage[account_number]["users"][user_account]
             return True
+        except Exception as e:
+            logger.error(e)
+            return False
+
+    def show_user(self, account_number, user_account):
+        """
+        Show the information on the users in the account
+        :param account_number:
+        :param user_account:
+        :return:
+        """
+        try:
+            return self.account_storage[account_number]["users"][user_account]
+        except Exception as e:
+            logger.error(e)
+            return False
+
+    def list_user(self, account_number, user_account):
+        """
+        Lists the users that are attached to the account
+        :param account_number:
+        :param user_account:
+        :return:
+        """
+        try:
+            return self.account_storage[account_number]["users"]
         except Exception as e:
             logger.error(e)
             return False
@@ -281,19 +343,6 @@ class PythonicRecord:
         try:
             del self.account_storage[account_number]["users"][user_account]["characters"][character_name]
             return True
-        except Exception as e:
-            logger.error(e)
-            return False
-
-    def show_user(self, account_number, user_account):
-        """
-
-        :param account_number:
-        :param user_account:
-        :return:
-        """
-        try:
-            return self.account_storage[account_number]["users"][user_account]
         except Exception as e:
             logger.error(e)
             return False
@@ -354,7 +403,7 @@ class PythonicRecord:
             logger.error(e)
             return False
 
-    def show_raid_signedups(self, account_number, raid_id):
+    def show_raid_signup(self, account_number, raid_id):
         """
         Return the characters signed up for a raid
         :param account_number:
@@ -363,6 +412,58 @@ class PythonicRecord:
         """
         try:
             return self.account_storage[account_number]["raids"][raid_id]["signups"]
+        except Exception as e:
+            logger.error(e)
+            return False
+
+    def add_raid_roster(self, account_number, raid_id, user_account, character_name):
+        """
+        Add a user to the raid roster
+        :param account_number:
+        :param raid_id:
+        :param user_account:
+        :param character_name:
+        :return:
+        """
+        try:
+            return self.account_storage[account_number]["raids"][raid_id]["roster"]
+        except Exception as e:
+            logger.error(e)
+            return False
+
+    def delete_raid_roster(self, account_number, raid_id, user_account, character_name):
+        """
+        Add a user to the raid roster
+        :param account_number:
+        :param raid_id:
+        :param user_account:
+        :param character_name:
+        :return:
+        """
+        try:
+            roster_index = [roster["user_account"] == user_account for roster in
+                            self.account_storage[account_number]["raids"][raid_id]["roster"]].index(True)
+            del self.account_storage[account_number]["raids"][raid_id]["roster"][roster_index]
+            return True
+        except Exception as e:
+            logger.error(e)
+            return False
+
+    def update_raid_roster(self, account_number, raid_id, user_account, character_name):
+        """
+        Update a raid roster
+        :param account_number:
+        :param raid_id:
+        :param user_account:
+        :param character_name:
+        :return:
+        """
+        try:
+            roster_index = [roster["user_account"] == user_account for roster in
+                            self.account_storage[account_number]["raids"][raid_id]["roster"]].index(True)
+            self.account_storage[account_number]["raids"][raid_id]["roster"][roster_index][
+                "character_name"] = character_name
+            return True
         except Exception as e:
             logger.error(e)
             return False
