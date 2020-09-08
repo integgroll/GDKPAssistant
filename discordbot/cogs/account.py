@@ -1,52 +1,41 @@
 import discord.ext.commands
+import discordbot.cogs.checks
+
+from loguru import logger
 
 
 class Accounts(discord.ext.commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    @discord.ext.commands.check_any(discordbot.cogs.checks.admin_only(), discordbot.cogs.checks.power_user())
     @discord.ext.commands.group(name='account', invoke_without_command=False)
     async def account(self, ctx):
         """
         Group for the Account commands Don't really want this base doing anthing
         :param ctx:
-        :param account_name:
         :return:
         """
         pass
-
-    @account.command()
-    async def hello(self, ctx, *, member: discord.Member = None):
-        """Says hello"""
-        member = member or ctx.author
-        if self._last_member is None or self._last_member.id != member.id:
-            await ctx.send('Hello {0.name}~'.format(member))
-        else:
-            await ctx.send('Hello {0.name}... This feels familiar.'.format(member))
-        self._last_member = member
 
     @account.group(name='show')
     async def show(self, ctx):
         """
         Show the account details for either admins, powerusers, users, or raids
         :param ctx:
-        :param subcommand:
         :return:
         """
-        await ctx.send("This is a test of the show group to check for permissions here")
+        pass
 
-    @show.command()
+    @discord.ext.commands.check_any(discordbot.cogs.checks.admin_only())
+    @show.command(name='admin', aliases=['admins'])
     async def admin(self, ctx):
         """
         Send back the information on the admins for the account
         :param ctx:
         :return:
         """
-        if ctx.message.author in ctx.bot.record_handle.show_admin_account(account_number=ctx.message.server):
-            await ctx.send(ctx.message.author,
-                                       ctx.bot.record_handle.show_account(account_number=ctx.message.server)["admins"])
-        else:
-            await ctx.send("Permission Denied, not in admins list")
+        await ctx.send(ctx.message.author, ctx.bot.record_handle.show_account(guild_id=ctx.message.guild.id)["admins"])
 
     @show.command(aliases=['powerusers', 'poweruser', 'power_users', 'powers'])
     async def power(self, ctx):
@@ -55,12 +44,8 @@ class Accounts(discord.ext.commands.Cog):
         :param ctx:
         :return:
         """
-        if ctx.message.author in ctx.bot.record_handle.show_admin_account(account_number=ctx.message.server):
-            await ctx.send(ctx.message.author,
-                                       ctx.bot.record_handle.show_account(account_number=ctx.message.server)[
-                                           "power_users"])
-        else:
-            await ctx.send("Permission Denied, not in admins list")
+        await ctx.send(ctx.message.author,
+                       ctx.bot.record_handle.show_account(guild_id=ctx.message.guild.id)["power_users"])
 
     @show.command(aliases=['users'])
     async def user(self, ctx):
@@ -69,11 +54,7 @@ class Accounts(discord.ext.commands.Cog):
         :param ctx:
         :return:
         """
-        if ctx.message.author in ctx.bot.record_handle.show_admin_account(account_number=ctx.message.server):
-            await ctx.send(ctx.message.author,
-                                       ctx.bot.record_handle.show_account(account_number=ctx.message.server)["users"])
-        else:
-            await ctx.send("Permission Denied, not in admins list")
+        await ctx.send(ctx.message.author, ctx.bot.record_handle.show_account(guild_id=ctx.message.guild.id)["users"])
 
     @show.command(aliases=['raids'])
     async def raid(self, ctx):
@@ -82,11 +63,7 @@ class Accounts(discord.ext.commands.Cog):
         :param ctx:
         :return:
         """
-        if ctx.message.author in ctx.bot.record_handle.show_admin_account(account_number=ctx.message.server):
-            await ctx.send(ctx.message.author,
-                                       ctx.bot.record_handle.show_account(account_number=ctx.message.server)["raids"])
-        else:
-            await ctx.send("Permission Denied, not in admins list")
+        await ctx.send(ctx.message.author, ctx.bot.record_handle.show_account(guild_id=ctx.message.guild.id)["raids"])
 
     @account.group(name='add')
     async def add(self, ctx):
@@ -95,34 +72,35 @@ class Accounts(discord.ext.commands.Cog):
         :param ctx:
         :return:
         """
-        await ctx.send("This is a test of the show group to check for permissions here")
+        pass
 
+    @discord.ext.commands.check_any(discordbot.cogs.checks.admin_only())
     @add.command()
-    async def admin(self, ctx, user_name: str):
+    async def admin(self, ctx, user: discord.User):
         """
         Adds an admin user to the account
         :param ctx:
-        :param user_name:
+        :param user:
         :return:
         """
-        pass
+        await ctx.send(f"Added {user.name} to the admins list")
 
     @add.command(aliases=['powerusers', 'poweruser', 'power_users', 'powers'])
-    async def power(self, ctx, user_name: str):
+    async def power(self, ctx, user: discord.User):
         """
         Adds a power user to the account
         :param ctx:
-        :param user_name:
+        :param user:
         :return:
         """
         pass
 
     @add.command(aliases=['users'])
-    async def user(self, ctx, user_name: str):
+    async def user(self, ctx, user: discord.User):
         """
         Adds a regular user to the account
         :param ctx:
-        :param user_name:
+        :param user:
         :return:
         """
         await ctx.send("Trying to add a user, doesn't look good")

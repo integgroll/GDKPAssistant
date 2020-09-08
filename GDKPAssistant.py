@@ -13,6 +13,7 @@ logger.info("Starting GDKP Assistant")
 discord_bot_handle = GDKPABot()
 logger.info(discord_bot_handle.commands)
 logger.info(list([cog.qualified_name for cog in discord_bot_handle.get_cog("Accounts").walk_commands()]))
+logger.info(list([cog.qualified_name for cog in discord_bot_handle.get_cog("Characters").walk_commands()]))
 discord_bot_handle.run(dyna_settings.BOT_TOKEN)
 logger.info("Shutting down GDKP Assistant")
 

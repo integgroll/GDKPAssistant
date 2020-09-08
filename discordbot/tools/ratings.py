@@ -1,21 +1,14 @@
-import os
 import selenium
-
-from loguru import logger
 from selenium import webdriver
 import selenium.webdriver.chrome.service
 import selenium.webdriver.chrome.options
 
 
-
-#import pandas as pd
-
-
-
 class CharacterRater:
     def __init__(self):
         """
-
+        Need a class to keep the driver going and to not ave to spin it all up every time we want to make a single web
+        request, ok two web requests per character
         """
 
         # Yes we apparently need to run this without sandboxing OR a head to the connection for this to function properly
@@ -24,27 +17,23 @@ class CharacterRater:
         chrome_options.binary_location = '/usr/bin/chromium'
         chrome_options.add_argument('--headless')
         chrome_options.add_argument('--no-sandbox')
-        self.chrome_driver = selenium.webdriver.Chrome(options=chrome_options,executable_path='/usr/bin/chromedriver')
+        self.chrome_driver = selenium.webdriver.Chrome(options=chrome_options, executable_path='/usr/bin/chromedriver')
 
-        #self.chrome_service = selenium.webdriver.chrome.service.Service('/usr/bin/chromedriver')
-        #self.chrome_service.start()
+        # self.chrome_service = selenium.webdriver.chrome.service.Service('/usr/bin/chromedriver')
+        # self.chrome_service.start()
 
-    def get_character_ratings(self, character_name):
+    def get_character_ratings(self, character_name, character_spec):
         """
 
         :param self:
         :param character_name:
         :return:
         """
-        self.chrome_driver.get(f"https://classic.warcraftlogs.com/character/us/atiesh/{character_name}#zone=1002&partition=2")
+        spec_addition = {"heal": "&metric=hps"}.get(character_spec, "")
+        self.chrome_driver.get(
+            f"https://classic.warcraftlogs.com/character/us/atiesh/{character_name}#zone=1002&partition=2{spec_addition}")
         bwl_perf_avg = self.chrome_driver.find_element_by_css_selector(".best-perf-avg>b").text
         aq_tab = self.chrome_driver.find_element_by_id("partitions-tab-3")
         aq_tab.click()
         aq_perf_avg = self.chrome_driver.find_element_by_css_selector(".best-perf-avg>b").text
-        return (bwl_perf_avg,aq_perf_avg)
-
-
-if __name__=="__main__":
-    rater_handle = CharacterRater()
-    logger.info(rater_handle.get_character_ratings("introgueroll"))
-    logger.info(rater_handle.get_character_ratings("spicy"))
+        return {"bwl": bwl_perf_avg, "aq40": aq_perf_avg}
