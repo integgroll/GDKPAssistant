@@ -134,19 +134,21 @@ class PythonicRecord:
         guild_id = str(guild_id)
         return self.account_storage[guild_id]["powerusers"]
 
-    def add_raid(self, guild_id, raid_instance, start_datetime):
+    def add_raid(self, guild_id, raid_instance, start_datetime, raid_message_id):
         """
         Create a raid that is attached to the account number, with the instance for the raid.
         :param guild_id:
         :param raid_instance:
         :param start_datetime:
+        :param raid_message_id:
         :return:
         """
         guild_id = str(guild_id)
         raid_template = {"raid_instance": raid_instance,
-                         "signups": [],  # {"user_id":data,"character_name":data,"signup_time":datetime}
-                         "roster": [],  # {user_id":data,"character_name":data,"signup_time":datetime}
-                         "start_datetime": datetime.datetime.strptime(start_datetime, "%Y-%m-%d %H:%M:%S")}
+                         "signups": [],  # {"user_id":data,"character_name":data, "character_class":data, "character_role",:data, "total_funds": int, "min_bids":[],"signup_time":datetime}
+                         "roster": [],  # {"user_id":data,"character_name":data, "character_class":data, "character_role",:data, "total_funds": int, "min_bids":[],"signup_time":datetime}
+                         "start_datetime": datetime.datetime.strptime(start_datetime, "%Y-%m-%d %H:%M:%S"),
+                         "raid_message_id":raid_message_id}
         raid_id = len(self.account_storage[guild_id]["raids"]) + 1000
         self.account_storage[guild_id]["raids"][raid_id] = raid_template
         return raid_id

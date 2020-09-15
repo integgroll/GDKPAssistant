@@ -7,7 +7,7 @@ from loguru import logger
 class Characters(discord.ext.commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.character_class_spec_list = {"druid": ["melee", "ranged", "heals"],
+        self.character_class_spec_list = {"druid": ["melee", "ranged", "heals","tank"],
                                           "hunter": ["ranged"],
                                           "mage": ["ranged"],
                                           "paladin": ["resto"],

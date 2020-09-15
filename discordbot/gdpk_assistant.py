@@ -2,6 +2,7 @@ import discord
 import importlib
 import discordbot.cogs.account
 import discordbot.cogs.character
+import discordbot.cogs.raids
 import discordbot.tools.ratings
 from loguru import logger
 from dynaconf import settings as dyna_settings
@@ -22,9 +23,12 @@ class GDKPABot(discord.ext.commands.Bot):
 
         self.add_cog(discordbot.cogs.account.Accounts(self))
         self.add_cog(discordbot.cogs.character.Characters(self))
+        self.add_cog(discordbot.cogs.raids.Raids(self))
 
         self.ratings_handle = discordbot.tools.ratings.CharacterRater()
 
+        self.reaction_list = ["HealsDruid", "HealsPaladin", "HealsPriest", "TankWarrior", "TankDruid", "MeleeDruid",
+                              "MeleeRogue", "MeleeWarrior", "RangedHunter", "RangedWarlock", "RangedMage"]
         self.server_message_state = {}
         # Load the database that you have put files in based on the configuration files
         self.record_handle = importlib.import_module(
@@ -66,10 +70,9 @@ class GDKPABot(discord.ext.commands.Bot):
         :param error:
         :return:
         """
-        if isinstance(error,discord.ext.commands.CheckFailure):
-            await ctx.message.channel.send(f"Seriously {ctx.message.author.name}, you don't have the rights for that command")
-
-
+        if isinstance(error, discord.ext.commands.CheckFailure):
+            await ctx.message.channel.send(
+                f"Seriously {ctx.message.author.name}, you don't have the rights for that command")
 
     async def on_voice_state_update(self, member, before, after):
         """
