@@ -57,10 +57,15 @@ class Raids(discord.ext.commands.Cog):
 
         if valid_datetime and valid_raid:
             raid_message = await ctx.message.channel.send("New Raid being created please wait a moment...")
+
             raid_id = self.bot.record_handle.add_raid(guild_id=raid_message.guild.id, raid_instance=raid_instance,
                                                       start_datetime=start_datetime, raid_message_id=raid_message.id)
+
             embed_handle = discordbot.tools.embed.generate_embed(raid_id=raid_id, raid_instance=raid_instance,
                                                                  start_datetime=start_datetime, signups=[])
+
             await raid_message.edit(content=None, embed=embed_handle)
-            for reaction in self.bot.reaction_list:
-                await raid_message.add_reaction(reaction)
+
+            for reaction in await ctx.guild.fetch_emojis():
+                if reaction.name in self.bot.reaction_list:
+                    await raid_message.add_reaction(reaction)

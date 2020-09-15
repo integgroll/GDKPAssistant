@@ -1,5 +1,6 @@
 import discord
 import datetime
+from loguru import logger
 
 
 def generate_embed(raid_id, raid_instance, start_datetime, signups=[]):
@@ -34,15 +35,14 @@ def generate_embed(raid_id, raid_instance, start_datetime, signups=[]):
     embed.set_author(name="GDKP Assistant", url="https://discordapp.com",
                      icon_url="https://cdn.discordapp.com/embed/avatars/0.png")
 
-    embed.add_field(name="🤔", value=f"ICO {len(signups)}", inline=True)
-    embed.add_field(name="😱", value=f"ICO {datetime_handle.strftime('%m-%d-%Y')}", inline=True)
-    embed.add_field(name="🙄", value=f"ICO {datetime_handle.strftime('%H:%M')} GMT -7", inline=True)
-
-    embed.add_field(name="🤔", value="ICO _Melee_ ## ICO", inline=True)
-    embed.add_field(name="😱", value="ICO _Ranged_ ## ICO", inline=True)
-    embed.add_field(name="🙄", value="ICO _Heals_ ## ICO", inline=True)
+    embed.add_field(name=f"ICO {len(signups)}", value=f"ICO _Melee_ {role_count['melee']} ICO", inline=True)
+    embed.add_field(name=f"ICO {datetime_handle.strftime('%m-%d-%Y')}",
+                    value=f"ICO _Ranged_ {role_count['ranged']} ICO", inline=True)
+    embed.add_field(name=f"ICO {datetime_handle.strftime('%H:%M')} GMT -7",
+                    value=f"ICO _Heals_ {role_count['heals']} ICO", inline=True)
 
     for role in ["Tank", "Hunter", "Priest", "Warrior", "Mage", "Paladin", "Rogue", "Warlock", "Druid"]:
-        embed.add_field(name="🤔", value=f"ICO*_{role}_* ({len(signups_by_class[role])})\n{output_strings[role]}",
+        logger.info(output_strings[role])
+        embed.add_field(name=f"ICO {role} {len(signups_by_class[role])}", value=f"{output_strings[role] or 'none'}",
                         inline=True)
     return embed

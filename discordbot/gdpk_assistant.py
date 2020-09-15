@@ -27,8 +27,9 @@ class GDKPABot(discord.ext.commands.Bot):
 
         self.ratings_handle = discordbot.tools.ratings.CharacterRater()
 
-        self.reaction_list = ["HealsDruid", "HealsPaladin", "HealsPriest", "TankWarrior", "TankDruid", "MeleeDruid",
-                              "MeleeRogue", "MeleeWarrior", "RangedHunter", "RangedWarlock", "RangedMage"]
+        self.reaction_list = ["HealsDruid", "HealsPaladin", "HealsPriest", "TankWarrior", "TankDruid",
+                              "MeleeDruid", "MeleeRogue", "MeleeWarrior", "RangedHunter", "RangedWarlock",
+                              "RangedMage"]
         self.server_message_state = {}
         # Load the database that you have put files in based on the configuration files
         self.record_handle = importlib.import_module(
@@ -47,7 +48,6 @@ class GDKPABot(discord.ext.commands.Bot):
         end up calling this event whenever a RESUME request fails.
         :return:
         """
-
         logger.info(f"Logged in as: {self.user.name} - {self.user.id}")
         logger.info("Get Ready to ROCK!!!")
 
@@ -72,7 +72,7 @@ class GDKPABot(discord.ext.commands.Bot):
         """
         if isinstance(error, discord.ext.commands.CheckFailure):
             await ctx.message.channel.send(
-                f"Seriously {ctx.message.author.name}, you don't have the rights for that command")
+                f"Seriously {ctx.message.author.id}, you don't have the rights for that command")
 
     async def on_voice_state_update(self, member, before, after):
         """
@@ -117,5 +117,6 @@ class GDKPABot(discord.ext.commands.Bot):
         :param guild:
         :return:
         """
+        logger.info(f"Joined {guild}")
         if guild.id not in self.record_handle.list_accounts():
             self.record_handle.add_account(guild.id, self.owner_id)
