@@ -22,7 +22,7 @@ class Raids(discord.ext.commands.Cog):
                                           "warrior": ["tank", "melee"]}
 
     @discord.ext.commands.check_any(discordbot.cogs.checks.admin_only(), discordbot.cogs.checks.power_user())
-    @discord.ext.commands.group(name='raids', invoke_without_command=False)
+    @discord.ext.commands.group(name='raids', aliases=['raid'], invoke_without_command=False)
     async def raids(self, ctx):
         """
         Base command group for an end user account to manage their characters

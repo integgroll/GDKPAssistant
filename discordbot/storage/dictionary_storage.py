@@ -30,7 +30,8 @@ class PythonicRecord:
         self.account_storage[guild_id] = {"admins": [requesting_account],
                                           "powerusers": {},
                                           "raids": {},
-                                          "users": {}}
+                                          "users": {},
+                                          "user_state": {}}
         return True
 
     def delete_account(self, guild_id):
@@ -145,10 +146,12 @@ class PythonicRecord:
         """
         guild_id = str(guild_id)
         raid_template = {"raid_instance": raid_instance,
-                         "signups": [],  # {"user_id":data,"character_name":data, "character_class":data, "character_role",:data, "total_funds": int, "min_bids":[],"signup_time":datetime}
-                         "roster": [],  # {"user_id":data,"character_name":data, "character_class":data, "character_role",:data, "total_funds": int, "min_bids":[],"signup_time":datetime}
+                         "signups": [],
+                         # {"user_id":data,"character_name":data, "character_class":data, "character_role",:data, "total_funds": int, "min_bids":[],"signup_time":datetime}
+                         "roster": [],
+                         # {"user_id":data,"character_name":data, "character_class":data, "character_role",:data, "total_funds": int, "min_bids":[],"signup_time":datetime}
                          "start_datetime": datetime.datetime.strptime(start_datetime, "%Y-%m-%d %H:%M:%S"),
-                         "raid_message_id":raid_message_id}
+                         "raid_message_id": raid_message_id}
         raid_id = len(self.account_storage[guild_id]["raids"]) + 1000
         self.account_storage[guild_id]["raids"][raid_id] = raid_template
         return raid_id
@@ -196,6 +199,21 @@ class PythonicRecord:
         guild_id = str(guild_id)
         return self.account_storage[guild_id]["raids"]
 
+    def get_raid_by_message_id(self, guild_id, message_id):
+        """
+        Gets a raid by its message id
+        :param guild_id:
+        :param message_id:
+        :return:
+        """
+        guild_id = str(guild_id)
+        message_id = str(message_id)
+        search_results = list(
+            [raid for raid in self.account_storage[guild_id]["raids"] if raid["raid_message_id"] == message_id])
+        if len(search_results) > 0:
+            return search_results[0]
+        return None
+
     def add_user(self, guild_id, user_id):
         """
         Add a user to the account
@@ -227,7 +245,10 @@ class PythonicRecord:
         """
         guild_id = str(guild_id)
         user_id = str(user_id)
-        return self.account_storage[guild_id]["users"][user_id]
+        results = self.account_storage[guild_id]["users"][user_id]
+        if results:
+            return results
+        return False
 
     def list_user(self, guild_id):
         """
@@ -400,3 +421,36 @@ class PythonicRecord:
         guild_id = str(guild_id)
         raid_id = str(raid_id)
         return self.account_storage[guild_id]["raids"][raid_id]["roster"]
+
+    def get_user_state(self, guild_id, user_id):
+        """
+        Get the current state value from the guilds state table
+        :param guild_id:
+        :param user_id:
+        :return:
+        """
+        guild_id = str(guild_id)
+        user_id = str(user_id)
+        return self.account_storage[guild_id]["user_state"].get(user_id, None)
+
+    def set_user_state(self, guild_id, user_id, new_state):
+        """
+        Set the current state value from the guilds state table
+        :param guild_id:
+        :param user_id:
+        :param new_state:
+        :return:
+        """
+        guild_id = str(guild_id)
+        user_id = str(user_id)
+        self.account_storage[guild_id]["user_state"][user_id] = new_state
+        return True
+
+    def list_user_states(self, guild_id):
+        """
+        List the whole user state setup for a guild
+        :param guild_id:
+        :return:
+        """
+        guild_id = str(guild_id)
+        return self.account_storage[guild_id]["user_state"]
